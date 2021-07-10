@@ -18,7 +18,9 @@ import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
     private var currentImageUrl: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,17 +28,17 @@ class MainActivity : AppCompatActivity() {
         loadMeme()
     }
 
-    private fun loadMeme(){
+    private fun loadMeme() {
 
         progressBar.visibility = View.VISIBLE
 
         val queue = Volley.newRequestQueue(this)
-        val url =  "https://meme-api.herokuapp.com/gimme"
+        val url = "https://meme-api.herokuapp.com/gimme"
 
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
             Response.Listener { response ->
                 currentImageUrl = response.getString("url")
-                Glide.with(this).load(currentImageUrl).listener(object: RequestListener<Drawable> {
+                Glide.with(this).load(currentImageUrl).listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
                         model: Any?,
@@ -46,7 +48,6 @@ class MainActivity : AppCompatActivity() {
                         progressBar.visibility = View.GONE
                         return false
                     }
-
                     override fun onResourceReady(
                         resource: Drawable?,
                         model: Any?,
@@ -61,19 +62,24 @@ class MainActivity : AppCompatActivity() {
                 ).into(imageView)
             },
             Response.ErrorListener {
-                Toast.makeText(this,"Something went wrong",Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show()
             }
         )
-       queue.add(jsonObjectRequest)
+        queue.add(jsonObjectRequest)
     }
+
     fun shareClick(view: View) {
 
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, "Hey, checkout this cool meme I got from Reddit $currentImageUrl")
-        val chooser = Intent.createChooser(intent,"Share this meme using....")
+        intent.putExtra(
+            Intent.EXTRA_TEXT,
+            "Hey, checkout this cool meme $currentImageUrl"
+        )
+        val chooser = Intent.createChooser(intent, "Share this meme using....")
         startActivity(chooser)
     }
+
     fun nextClick(view: View) {
 
         loadMeme()
